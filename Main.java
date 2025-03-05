@@ -2,7 +2,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 class Edge{
     public String srcV;
@@ -63,5 +65,50 @@ public class Main{
         }catch(IOException e){
             System.out.println("Can not read the file: " + e.getMessage());
         }
+    }
+
+    public MultiwayTreeNode Prim(Map<String, Vertex> graph, String root){
+
+        Map<String, Float> key = new HashMap<>();
+        Map<String, MultiwayTreeNode> treeMap = new HashMap<>();
+        MinHeap PQ = new MinHeap();
+
+        //initials
+        for(String u : graph.keySet()){
+            //key[u]=inf
+            //pred[u]=null (new MultiwayTreeNode)
+            //add all vertices to PQ based on keys
+
+            key.put(u, Float.MAX_VALUE);
+            treeMap.put(u, new MultiwayTreeNode(u));
+            PQ.insert(u, Float.MAX_VALUE);
+        }
+
+        //root
+        MultiwayTreeNode r = treeMap.get(root);
+        key.put(r, 0f);
+        PQ.decreaseKey(root, 0f);
+
+        while(!PQ.isEmpty()){
+            NodePQ min = PQ.extractMin();
+            String u = min.vertex;
+            MultiwayTreeNode uNode= treeMap.get(u);
+
+            for(Edge edge : graph.get(u).edges){
+                String v = edge.destV;
+
+                if(PQ.trackMap.containsKey(v) && edge.weight < key.get(v)){
+                    key.put(v, edge.weight);
+                    PQ.decreaseKey(v, edge.weight);
+
+                    MultiwayTreeNode vNode = treeMap.get(v);
+                    if (vNode.parent != null) {
+                        vNode.parent = null; 
+                    }
+                }
+                uNode.addChild(vNode);
+            }
+        }
+        return r;
     }
 }
