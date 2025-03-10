@@ -32,7 +32,7 @@ class Vertex{
 public class Main{
     public static void main(String[] args){
 
-        String inputFile = args[0];
+       /*  String inputFile = args[0];
         //read the file and create adjacency list
         try{
             BufferedReader br = new BufferedReader(new FileReader(inputFile));
@@ -64,10 +64,36 @@ public class Main{
 
         }catch(IOException e){
             System.out.println("Can not read the file: " + e.getMessage());
+        }*/
+        Map<String, Vertex> graph = new HashMap<>();
+        graph.put("a", new Vertex("a"));
+        graph.put("b", new Vertex("b"));
+        graph.put("c", new Vertex("c"));
+        graph.put("d", new Vertex("d"));
+        graph.get("a").edges.add(new Edge("a", "b", 5));
+        graph.get("b").edges.add(new Edge("b", "a", 5));
+        graph.get("a").edges.add(new Edge("a", "c", 2));
+        graph.get("c").edges.add(new Edge("c", "a", 2));
+        graph.get("b").edges.add(new Edge("b", "c", 8));
+        graph.get("c").edges.add(new Edge("c", "b", 8));
+        graph.get("b").edges.add(new Edge("b", "d", 1));
+        graph.get("d").edges.add(new Edge("d", "b", 1));
+        graph.get("c").edges.add(new Edge("c", "d", 6));
+        graph.get("d").edges.add(new Edge("d", "c", 6));
+        Map<String, MultiwayTreeNode> treeMap = Prim(graph, "a");
+        for(String key : treeMap.keySet()){
+            MultiwayTreeNode node = treeMap.get(key);
+            System.out.print(node.id + ": ");
+            MultiwayTreeNode child = node.firstChild;
+            while(child != null){
+                System.out.print(child.id + " ");
+                child = child.nextSibling;
+            }
+            System.out.println();
         }
     }
 
-    public MultiwayTreeNode Prim(Map<String, Vertex> graph, String root){
+    public static Map<String, MultiwayTreeNode> Prim(Map<String, Vertex> graph, String root){
 
         Map<String, Float> key = new HashMap<>();
         Map<String, MultiwayTreeNode> treeMap = new HashMap<>();
@@ -85,8 +111,7 @@ public class Main{
         }
 
         //root
-        MultiwayTreeNode r = treeMap.get(root);
-        key.put(r, 0f);
+        key.put(root, 0f);
         PQ.decreaseKey(root, 0f);
 
         while(!PQ.isEmpty()){
@@ -103,12 +128,21 @@ public class Main{
 
                     MultiwayTreeNode vNode = treeMap.get(v);
                     if (vNode.parent != null) {
-                        vNode.parent = null; 
+                        // Remove vNode from its previous parent's children
+                        if (vNode.prevSibling != null) {
+                            vNode.prevSibling.nextSibling = vNode.nextSibling;
+                        } else {
+                            vNode.parent.firstChild = vNode.nextSibling;
+                        }
+                        if (vNode.nextSibling != null) {
+                            vNode.nextSibling.prevSibling = vNode.prevSibling;
+                        }
                     }
+                    vNode.parent = uNode;
+                    uNode.addChild(vNode);
                 }
-                uNode.addChild(vNode);
             }
         }
-        return r;
+        return treeMap;
     }
 }
