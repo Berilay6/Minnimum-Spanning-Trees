@@ -111,6 +111,19 @@ public class Main{
             }
             System.out.println();
         }
+
+        evert(treeMap.get("c"));
+        System.out.println("After evert:");
+        for(String key : treeMap.keySet()){
+            MultiwayTreeNode node = treeMap.get(key);
+            System.out.print(node.id + ": ");
+            MultiwayTreeNode child = node.firstChild;
+            while(child != null){
+                System.out.print(child.id + " ");
+                child = child.nextSibling;
+            }
+            System.out.println();
+        }
     }
 
     public static Map<String, MultiwayTreeNode> PrimMST(Map<String, Vertex> graph, String root){
@@ -163,5 +176,75 @@ public class Main{
             }
         }
         return treeMap;
+    }
+
+    public static void evert(MultiwayTreeNode newRoot){
+        //we should reverse the connections of the tree starting from newRoot until previous root
+        //to do this we will use cut and link operations
+        MultiwayTreeNode current = newRoot;
+        MultiwayTreeNode prev = null;
+        MultiwayTreeNode next = null;
+        
+        while(current != null){
+            next = current.parent;
+            cut(current);
+
+            if(prev != null){
+                link(current, prev);
+            }
+
+            prev = current;
+            current = next;
+        }
+        newRoot.parent = null;
+    }
+
+    public static void cut (MultiwayTreeNode u){
+        if(u.parent != null){
+            // Remove u from its parent's children
+            if (u.prevSibling != null) {
+                u.prevSibling.nextSibling = u.nextSibling;
+            } else {
+                u.parent.firstChild = u.nextSibling;
+            }
+            if (u.nextSibling != null) {
+                u.nextSibling.prevSibling = u.prevSibling;
+            }
+            //remove u from its parent
+            u.parent = null;
+            u.prevSibling = null;
+            u.nextSibling = null;
+        }
+
+    }
+
+    public static void link(MultiwayTreeNode v, MultiwayTreeNode u){
+        if (v.parent != null) {
+            System.out.println("Error: " + v + " is already connected");
+            return;
+        }
+        v.parent = u;
+        if(u.firstChild == null){
+            u.firstChild = v;
+        }
+        else{
+            // we should link them with correct alphabetic order
+            if(v.id.compareTo(u.firstChild.id) < 0){
+                v.nextSibling = u.firstChild;
+                u.firstChild.prevSibling = v;
+                u.firstChild = v;
+                return;
+            
+            }
+            else{
+                 MultiwayTreeNode sibling = u.firstChild;
+                while(sibling.nextSibling != null){
+                    sibling = sibling.nextSibling;
+                }
+                sibling.nextSibling = v;
+                v.prevSibling = sibling;
+            }
+           
+        }
     }
 }
