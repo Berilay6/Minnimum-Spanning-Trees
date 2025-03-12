@@ -48,7 +48,7 @@ public class Main{
             }
 
             //read the number of edges
-            int edgesNum = Integer.parseInt(br.readLine().trim);
+            int edgesNum = Integer.parseInt(br.readLine().trim());
 
             //add edges to adjacency list
             for(int i= 0; i<edgesNum; i++){
@@ -70,17 +70,37 @@ public class Main{
         graph.put("b", new Vertex("b"));
         graph.put("c", new Vertex("c"));
         graph.put("d", new Vertex("d"));
-        graph.get("a").edges.add(new Edge("a", "b", 5));
-        graph.get("b").edges.add(new Edge("b", "a", 5));
-        graph.get("a").edges.add(new Edge("a", "c", 2));
-        graph.get("c").edges.add(new Edge("c", "a", 2));
-        graph.get("b").edges.add(new Edge("b", "c", 8));
-        graph.get("c").edges.add(new Edge("c", "b", 8));
-        graph.get("b").edges.add(new Edge("b", "d", 1));
-        graph.get("d").edges.add(new Edge("d", "b", 1));
-        graph.get("c").edges.add(new Edge("c", "d", 6));
-        graph.get("d").edges.add(new Edge("d", "c", 6));
-        Map<String, MultiwayTreeNode> treeMap = Prim(graph, "a");
+        graph.put("e", new Vertex("e"));
+        graph.put("f", new Vertex("f"));
+        graph.put("g", new Vertex("g"));
+
+        graph.get("a").edges.add(new Edge("a", "b", 4));
+        graph.get("b").edges.add(new Edge("b", "a", 4));
+        graph.get("a").edges.add(new Edge("a", "c", 8));
+        graph.get("c").edges.add(new Edge("c", "a", 8));
+        graph.get("b").edges.add(new Edge("b", "c", 9));
+        graph.get("c").edges.add(new Edge("c", "b", 9));
+        graph.get("b").edges.add(new Edge("b", "d", 8.5f));
+        graph.get("d").edges.add(new Edge("d", "b", 8.5f));
+        graph.get("b").edges.add(new Edge("b", "e", 10));
+        graph.get("e").edges.add(new Edge("e", "b", 10));
+        graph.get("c").edges.add(new Edge("c", "d", 2));
+        graph.get("d").edges.add(new Edge("d", "c", 2));
+        graph.get("c").edges.add(new Edge("c", "f", 1));
+        graph.get("f").edges.add(new Edge("f", "c", 1));
+        graph.get("d").edges.add(new Edge("d", "e", 7));
+        graph.get("e").edges.add(new Edge("e", "d", 7));
+        graph.get("d").edges.add(new Edge("d", "f", 9));
+        graph.get("f").edges.add(new Edge("f", "d", 9));
+        graph.get("e").edges.add(new Edge("e", "f", 5));
+        graph.get("f").edges.add(new Edge("f", "e", 5));
+        graph.get("e").edges.add(new Edge("e", "g", 6));
+        graph.get("g").edges.add(new Edge("g", "e", 6));
+        graph.get("f").edges.add(new Edge("f", "g", 2.5f));
+        graph.get("g").edges.add(new Edge("g", "f", 2.5f));
+
+
+        Map<String, MultiwayTreeNode> treeMap = PrimMST(graph, "a");
         for(String key : treeMap.keySet()){
             MultiwayTreeNode node = treeMap.get(key);
             System.out.print(node.id + ": ");
@@ -93,7 +113,7 @@ public class Main{
         }
     }
 
-    public static Map<String, MultiwayTreeNode> Prim(Map<String, Vertex> graph, String root){
+    public static Map<String, MultiwayTreeNode> PrimMST(Map<String, Vertex> graph, String root){
 
         Map<String, Float> key = new HashMap<>();
         Map<String, MultiwayTreeNode> treeMap = new HashMap<>();
@@ -138,7 +158,6 @@ public class Main{
                             vNode.nextSibling.prevSibling = vNode.prevSibling;
                         }
                     }
-                    vNode.parent = uNode;
                     uNode.addChild(vNode);
                 }
             }

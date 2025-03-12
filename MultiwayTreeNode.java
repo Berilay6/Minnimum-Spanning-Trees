@@ -21,6 +21,8 @@ public class MultiwayTreeNode{
         //case 1: new child is the first child of parent node
         if(this.firstChild == null){
             this.firstChild = ch;
+            ch.prevSibling = null;
+            ch.nextSibling = null;
         }
 
         //case 2: new child is not the first child of parent node
