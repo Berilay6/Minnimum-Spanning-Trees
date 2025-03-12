@@ -124,6 +124,9 @@ public class Main{
             }
             System.out.println();
         }
+
+        printMST("a", treeMap);
+        printMST("f", treeMap);
     }
 
     public static Map<String, MultiwayTreeNode> PrimMST(Map<String, Vertex> graph, String root){
@@ -220,7 +223,7 @@ public class Main{
 
     public static void link(MultiwayTreeNode v, MultiwayTreeNode u){
         if (v.parent != null) {
-            System.out.println("Error: " + v + " is already connected");
+            System.out.println("Invalid Operation: " + v + " is already connected");
             return;
         }
         v.parent = u;
@@ -245,6 +248,41 @@ public class Main{
                 v.prevSibling = sibling;
             }
            
+        }
+    }
+
+    public static void printMST(String root, Map<String, MultiwayTreeNode> treeMap){
+
+        MultiwayTreeNode r = treeMap.get(root);
+        if(r == null){
+            System.out.println("Invalid Operation: Root not found");
+            return;
+        }
+
+        //arrange the MST according to root
+        evert(r);
+
+        // print the MST using preorder traversal
+        System.out.println("Directive-----------------> print-mst " + root);
+        preorderTraversal(r, 0);
+    }
+    
+    public static void preorderTraversal(MultiwayTreeNode root, int level) {
+        if (root == null) {
+            System.out.println("Invalid Operation: Root not found");
+        }
+
+        // Print the current node
+        for (int i = 0; i < level; i++) {
+            System.out.print(". ");
+        }
+        System.out.println(root.id);
+
+        // Recursively traverse the children
+        MultiwayTreeNode child = root.firstChild;
+        while (child != null) {
+            preorderTraversal(child, level + 1);
+            child = child.nextSibling;
         }
     }
 }
