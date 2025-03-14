@@ -133,6 +133,19 @@ public class Main{
         printMST("a", treeMap);
         insertEdge("b", "g", 1.5f, treeMap);
         printMST("a", treeMap);
+        path("a", "e", treeMap);
+        decreaseWeight("a", "f", 11.5f, treeMap);
+        printMST("a", treeMap);
+        decreaseWeight("b", "c", 5.5f, treeMap);
+        printMST("a", treeMap);
+        decreaseWeight("b", "e", 7, treeMap);
+        printMST("a", treeMap);
+        insertEdge("b", "c", 1, treeMap);
+        decreaseWeight("c", "g", 4, treeMap);
+        printMST("a", treeMap);
+        insertEdge("a", "e", 1.5f, treeMap);
+        printMST("a", treeMap);
+        path("e", "b", treeMap);
     }
 
     public static Map<String, MultiwayTreeNode> PrimMST(Map<String, Vertex> graph, String root){
@@ -334,10 +347,28 @@ public class Main{
         }
 
         //if the edge already exists, it is invalid operation
-        if (vNode.parent != null && vNode.parent == uNode) {
+        Edge target = null;
+        for(Edge edge : graph.get(u).edges){
+            if(edge.destV.equals(v)){
+                target = edge;
+                break;
+            }
+        }
+        if(target != null){
             System.out.println("Invalid Operation");
             return;
         }
+
+        //add the edge to graph
+        graph.get(u).edges.add(new Edge(u, v, w));
+        graph.get(v).edges.add(new Edge(v, u, w));
+
+        updateMST(uNode, vNode, w);
+    }
+    
+    //this method is for updating the path between u and v when there is a edge change in MST without calling Prim()
+
+    public static void updateMST(MultiwayTreeNode uNode, MultiwayTreeNode vNode, float w){
 
         //we should find the max weighted edge in the path of u to v
         //if the weight of the new edge is smaller than the edge that we found, update the MST
@@ -358,18 +389,56 @@ public class Main{
             current = current.parent;
         }
 
+        //if the weight is smaller than maxWeight, update
         if(w < maxWeight && maxNode != null){
             cut(maxNode);
             link(uNode, vNode);
         }
     }
 
-    public static float getEdgeWeight(MultiwayTreeNode parent, MultiwayTreeNode child) {
-        for (Edge edge : graph.get(parent.id).edges) {
-            if (edge.destV.equals(child.id)) {
+    //this is the helper method for getting wanted edge weight
+    public static float getEdgeWeight(MultiwayTreeNode src, MultiwayTreeNode dest) {
+        for (Edge edge : graph.get(src.id).edges) {
+            if (edge.destV.equals(dest.id)) {
                 return edge.weight;
             }
         }
         return Float.MAX_VALUE;
-    } 
+    }
+
+    public static void decreaseWeight(String u, String v, float w, Map<String, MultiwayTreeNode> treeMap){
+
+        MultiwayTreeNode uNode = treeMap.get(u);
+        MultiwayTreeNode vNode = treeMap.get(v);
+
+        System.out.println("Directive-----------------> decrease-weight " + u + " " + v + " " + w);
+
+        //if the given vertices does not exist it is invalid
+        if (u == null || v == null) {
+            System.out.println("Invalid Operation");
+            return;
+        }
+
+        //find the edge between u and v
+        Edge target = null;
+        for(Edge edge : graph.get(u).edges){
+            if(edge.destV.equals(v)){
+                target = edge;
+                break;
+            }
+        }
+        //if the edge does not exist it is invalid operation
+        if(target == null){
+            System.out.println("Invalid Operation");
+            return;
+        }
+
+        //calculate and update the new weight
+        float newWeight = target.weight - w;
+        target.weight = newWeight;
+
+        updateMST(uNode, vNode, newWeight);
+
+    }
+
 }
