@@ -30,6 +30,9 @@ class Vertex{
 }
 
 public class Main{
+
+    //global variable graph
+    public static Map<String, Vertex> graph = new HashMap<>();
     public static void main(String[] args){
 
        /*  String inputFile = args[0];
@@ -65,7 +68,7 @@ public class Main{
         }catch(IOException e){
             System.out.println("Can not read the file: " + e.getMessage());
         }*/
-        Map<String, Vertex> graph = new HashMap<>();
+        
         graph.put("a", new Vertex("a"));
         graph.put("b", new Vertex("b"));
         graph.put("c", new Vertex("c"));
@@ -126,11 +129,10 @@ public class Main{
         }
 
         printMST("a", treeMap);
-        printMST("f", treeMap);
-        path("f", "b", treeMap);
-        path("f", "f", treeMap);
-        path("a", "g", treeMap);
-        printMST("b", treeMap);
+        insertEdge("a", "f", 12, treeMap);
+        printMST("a", treeMap);
+        insertEdge("b", "g", 1.5f, treeMap);
+        printMST("a", treeMap);
     }
 
     public static Map<String, MultiwayTreeNode> PrimMST(Map<String, Vertex> graph, String root){
@@ -295,6 +297,7 @@ public class Main{
         MultiwayTreeNode uNode = treeMap.get(u);
         MultiwayTreeNode vNode = treeMap.get(v);
 
+        //if the given vertices does not exist it is invalid
         if(u == null || v == null){
             System.out.println("Invalid Operation: Node not found");
         }
@@ -316,4 +319,57 @@ public class Main{
         }
         System.out.println(path.get(0));
     }
+
+    public static void insertEdge(String u, String v, float w, Map<String, MultiwayTreeNode> treeMap){
+
+        MultiwayTreeNode uNode = treeMap.get(u);
+        MultiwayTreeNode vNode = treeMap.get(v);
+
+        System.out.println("Directive-----------------> insert-edge " + u + " " + v + " " + w);
+
+        //if the given vertices does not exist it is invalid
+        if (u == null || v == null) {
+            System.out.println("Invalid Operation");
+            return;
+        }
+
+        //if the edge already exists, it is invalid operation
+        if (vNode.parent != null && vNode.parent == uNode) {
+            System.out.println("Invalid Operation");
+            return;
+        }
+
+        //we should find the max weighted edge in the path of u to v
+        //if the weight of the new edge is smaller than the edge that we found, update the MST
+
+        evert(uNode); 
+
+        MultiwayTreeNode maxNode = null;
+        float maxWeight = Float.MIN_VALUE;
+        MultiwayTreeNode current = vNode;
+
+        while(current.parent != null){
+            float edgeWeight = getEdgeWeight(current.parent, current);
+
+            if (edgeWeight > maxWeight) {
+                maxWeight = edgeWeight;
+                maxNode = current;
+            }
+            current = current.parent;
+        }
+
+        if(w < maxWeight && maxNode != null){
+            cut(maxNode);
+            link(uNode, vNode);
+        }
+    }
+
+    public static float getEdgeWeight(MultiwayTreeNode parent, MultiwayTreeNode child) {
+        for (Edge edge : graph.get(parent.id).edges) {
+            if (edge.destV.equals(child.id)) {
+                return edge.weight;
+            }
+        }
+        return Float.MAX_VALUE;
+    } 
 }
