@@ -127,6 +127,10 @@ public class Main{
 
         printMST("a", treeMap);
         printMST("f", treeMap);
+        path("f", "b", treeMap);
+        path("f", "f", treeMap);
+        path("a", "g", treeMap);
+        printMST("b", treeMap);
     }
 
     public static Map<String, MultiwayTreeNode> PrimMST(Map<String, Vertex> graph, String root){
@@ -284,5 +288,32 @@ public class Main{
             preorderTraversal(child, level + 1);
             child = child.nextSibling;
         }
+    }
+
+    public static void path(String u, String v, Map<String, MultiwayTreeNode> treeMap){
+
+        MultiwayTreeNode uNode = treeMap.get(u);
+        MultiwayTreeNode vNode = treeMap.get(v);
+
+        if(u == null || v == null){
+            System.out.println("Invalid Operation: Node not found");
+        }
+
+        //evert the tree and make u the root
+        evert(uNode);
+
+        //we will start from v in the everted tree and go upside until the root which is u
+        List<String> path = new ArrayList<>();
+        while(vNode != null){
+            path.add(vNode.id);
+            vNode=vNode.parent;
+        }
+
+        //print the list reverse
+        System.out.println("Directive-----------------> path " + u + " " + v);
+        for(int i=path.size()-1; i>0; i--){
+            System.out.print(path.get(i) + ", ");
+        }
+        System.out.println(path.get(0));
     }
 }
