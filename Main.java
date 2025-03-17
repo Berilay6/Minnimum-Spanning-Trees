@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
-class Edge{
+class Edge implements Comparable<Edge>{
     public String srcV;
     public String destV;
     public float weight;
@@ -16,15 +18,21 @@ class Edge{
         this.destV = destV;
         this.weight = weight;
     }
+
+    // for alphabetical order
+    @Override
+    public int compareTo(Edge other) {
+        return this.destV.compareTo(other.destV);
+    }
 }
 
 class Vertex{
     public String id;
-    public List<Edge> edges;
+    public Set<Edge> edges;
 
     public Vertex(String id){
         this.id=id;
-        this.edges=new ArrayList<>();
+        this.edges=new TreeSet<>(); //treeset for automatic order of edges according to alphabet
     }
 
 }
