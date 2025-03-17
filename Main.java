@@ -35,7 +35,7 @@ public class Main{
     public static Map<String, Vertex> graph = new HashMap<>();
     public static void main(String[] args){
 
-       /*  String inputFile = args[0];
+         String inputFile = args[0];
         //read the file and create adjacency list
         try{
             BufferedReader br = new BufferedReader(new FileReader(inputFile));
@@ -43,9 +43,12 @@ public class Main{
             //read the number of vertices in the first line
             int verticesNum = Integer.parseInt(br.readLine().trim());
 
-            //add vertices to list
-            Map<String, Vertex> graph = new HashMap<>();
-            for(int i=0; i<verticesNum; i++){
+            //we will use the first vertex for MTS
+            String firstVertex= br.readLine().trim();
+            graph.put(firstVertex, new Vertex(firstVertex));
+
+            //add other vertices to list
+            for(int i=1; i<verticesNum; i++){
                 String vertexId= br.readLine().trim();
                 graph.put(vertexId, new Vertex(vertexId));
             }
@@ -64,88 +67,48 @@ public class Main{
                 graph.get(vertex2).edges.add(new Edge(vertex2, vertex1, weight));
             }
 
+            //Create MST
+            Map<String, MultiwayTreeNode> treeMap = PrimMST(graph, firstVertex);
+
+            //directives
+            String line;
+            while((line = br.readLine()) != null){
+                line=line.trim();
+
+                //if the line is quit, the process is finished
+                if(line.equals("quit")) break;
+
+                //directives
+                String[] command = line.split(" ");
+                switch (command[0]){
+                    case "print-mst":
+                        printMST(command[1],treeMap);
+                        break;
+                    
+                    case "path":
+                        path(command[1], command[2],treeMap);
+                        break;
+                    
+                    case "insert-edge":
+                        insertEdge(command[1], command[2], Float.       parseFloat(command[3]), treeMap);
+                        break;
+
+                    case "decrease-weight":
+                        decreaseWeight(command[1], command[2], Float.parseFloat(command[3]), treeMap);
+                        break;
+                    
+                    default:
+                        System.out.println("Invalid command: " + command[0]);
+
+                }
+            }
+
+            br.close();
 
         }catch(IOException e){
             System.out.println("Can not read the file: " + e.getMessage());
-        }*/
+        }
         
-        graph.put("a", new Vertex("a"));
-        graph.put("b", new Vertex("b"));
-        graph.put("c", new Vertex("c"));
-        graph.put("d", new Vertex("d"));
-        graph.put("e", new Vertex("e"));
-        graph.put("f", new Vertex("f"));
-        graph.put("g", new Vertex("g"));
-
-        graph.get("a").edges.add(new Edge("a", "b", 4));
-        graph.get("b").edges.add(new Edge("b", "a", 4));
-        graph.get("a").edges.add(new Edge("a", "c", 8));
-        graph.get("c").edges.add(new Edge("c", "a", 8));
-        graph.get("b").edges.add(new Edge("b", "c", 9));
-        graph.get("c").edges.add(new Edge("c", "b", 9));
-        graph.get("b").edges.add(new Edge("b", "d", 8.5f));
-        graph.get("d").edges.add(new Edge("d", "b", 8.5f));
-        graph.get("b").edges.add(new Edge("b", "e", 10));
-        graph.get("e").edges.add(new Edge("e", "b", 10));
-        graph.get("c").edges.add(new Edge("c", "d", 2));
-        graph.get("d").edges.add(new Edge("d", "c", 2));
-        graph.get("c").edges.add(new Edge("c", "f", 1));
-        graph.get("f").edges.add(new Edge("f", "c", 1));
-        graph.get("d").edges.add(new Edge("d", "e", 7));
-        graph.get("e").edges.add(new Edge("e", "d", 7));
-        graph.get("d").edges.add(new Edge("d", "f", 9));
-        graph.get("f").edges.add(new Edge("f", "d", 9));
-        graph.get("e").edges.add(new Edge("e", "f", 5));
-        graph.get("f").edges.add(new Edge("f", "e", 5));
-        graph.get("e").edges.add(new Edge("e", "g", 6));
-        graph.get("g").edges.add(new Edge("g", "e", 6));
-        graph.get("f").edges.add(new Edge("f", "g", 2.5f));
-        graph.get("g").edges.add(new Edge("g", "f", 2.5f));
-
-
-        Map<String, MultiwayTreeNode> treeMap = PrimMST(graph, "a");
-        for(String key : treeMap.keySet()){
-            MultiwayTreeNode node = treeMap.get(key);
-            System.out.print(node.id + ": ");
-            MultiwayTreeNode child = node.firstChild;
-            while(child != null){
-                System.out.print(child.id + " ");
-                child = child.nextSibling;
-            }
-            System.out.println();
-        }
-
-        evert(treeMap.get("c"));
-        System.out.println("After evert:");
-        for(String key : treeMap.keySet()){
-            MultiwayTreeNode node = treeMap.get(key);
-            System.out.print(node.id + ": ");
-            MultiwayTreeNode child = node.firstChild;
-            while(child != null){
-                System.out.print(child.id + " ");
-                child = child.nextSibling;
-            }
-            System.out.println();
-        }
-
-        printMST("a", treeMap);
-        insertEdge("a", "f", 12, treeMap);
-        printMST("a", treeMap);
-        insertEdge("b", "g", 1.5f, treeMap);
-        printMST("a", treeMap);
-        path("a", "e", treeMap);
-        decreaseWeight("a", "f", 11.5f, treeMap);
-        printMST("a", treeMap);
-        decreaseWeight("b", "c", 5.5f, treeMap);
-        printMST("a", treeMap);
-        decreaseWeight("b", "e", 7, treeMap);
-        printMST("a", treeMap);
-        insertEdge("b", "c", 1, treeMap);
-        decreaseWeight("c", "g", 4, treeMap);
-        printMST("a", treeMap);
-        insertEdge("a", "e", 1.5f, treeMap);
-        printMST("a", treeMap);
-        path("e", "b", treeMap);
     }
 
     public static Map<String, MultiwayTreeNode> PrimMST(Map<String, Vertex> graph, String root){
