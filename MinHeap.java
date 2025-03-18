@@ -16,6 +16,7 @@ class NodePQ{
 
 //MinHeap structure with PQ elements
 public class MinHeap{
+
     public List<NodePQ> heap;
     //trackMap will store indexes of nodes in the heap for easy finding
     public Map<String, Integer> trackMap; 
@@ -31,6 +32,7 @@ public class MinHeap{
 
     //decreases the key value of the given vertex and rearrange the place of the vertex in heap
     public void decreaseKey(String vertex, float newKey){
+
         int i=trackMap.get(vertex);
         heap.get(i).key = newKey;
 
@@ -40,7 +42,9 @@ public class MinHeap{
         }
     }
 
+    //swap two vertices of heap and  arrange trackmap
     public void swap(int i, int j) {
+
         NodePQ temp = heap.get(i);
         heap.set(i, heap.get(j));
         heap.set(j, temp);
@@ -49,7 +53,9 @@ public class MinHeap{
         trackMap.put(heap.get(j).vertex, j);
     }
 
+    //add a new vertex into the heap
     public void insert(String vertex, float key){
+
         NodePQ node = new NodePQ(vertex, key);
         heap.add(node);
         int i=heap.size()-1;
@@ -57,7 +63,9 @@ public class MinHeap{
         decreaseKey(vertex, key);
     }
 
+    //get the minnimum vertex of the heap
     public NodePQ extractMin(){
+
         if(heap.isEmpty()) 
             return null;
 
@@ -75,7 +83,9 @@ public class MinHeap{
         return min;
     }
 
+    //arrange the heap according to min-heap rules starting from the given index
     public void minHeapify(int i) {
+
         int left = 2 * i + 1;
         int right = 2 * i + 2;
         int smallest = i;

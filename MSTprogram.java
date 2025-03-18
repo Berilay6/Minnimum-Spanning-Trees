@@ -172,7 +172,8 @@ public class MSTprogram{
     }
 
     public static void evert(MultiwayTreeNode newRoot){
-        //we should reverse the connections of the tree starting from newRoot until previous root
+        
+        //we should reverse the connections of the tree starting from newRoot until actual root
         //to do this we will use cut and link operations
         MultiwayTreeNode current = newRoot;
         MultiwayTreeNode prev = null;
@@ -193,6 +194,7 @@ public class MSTprogram{
     }
 
     public static void cut (MultiwayTreeNode u){
+
         if(u.parent != null){
             // Remove u from its parent's children
             if (u.prevSibling != null) {
@@ -212,10 +214,14 @@ public class MSTprogram{
     }
 
     public static void link(MultiwayTreeNode v, MultiwayTreeNode u){
+
         if (v.parent != null) {
-            System.out.println("Invalid Operation: " + v + " is already connected");
+            //v is already connected
+            System.out.println("Invalid Operation");
             return;
         }
+
+        //connect v to u
         v.parent = u;
         if(u.firstChild == null){
             u.firstChild = v;
@@ -245,7 +251,8 @@ public class MSTprogram{
 
         MultiwayTreeNode r = treeMap.get(root);
         if(r == null){
-            System.out.println("Invalid Operation: Root not found");
+            System.out.println("Invalid Operation");
+            //root not found
             return;
         }
 
@@ -258,8 +265,11 @@ public class MSTprogram{
     }
     
     public static void preorderTraversal(MultiwayTreeNode root, int level) {
+
         if (root == null) {
-            System.out.println("Invalid Operation: Root not found");
+            System.out.println("Invalid Operation");
+            //root not found
+            return;
         }
 
         // Print the current node
@@ -283,7 +293,9 @@ public class MSTprogram{
 
         //if the given vertices does not exist it is invalid
         if(u == null || v == null){
-            System.out.println("Invalid Operation: Node not found");
+            System.out.println("Invalid Operation");
+            //node not found
+            return;
         }
 
         //evert the tree and make u the root
@@ -338,7 +350,6 @@ public class MSTprogram{
     }
     
     //this method is for updating the path between u and v when there is a edge change in MST without calling Prim()
-
     public static void updateMST(MultiwayTreeNode uNode, MultiwayTreeNode vNode, float w){
 
         //we should find the max weighted edge in the path of u to v
@@ -346,6 +357,7 @@ public class MSTprogram{
 
         evert(uNode); 
 
+        //find the max edge and max node in the path of u to v
         MultiwayTreeNode maxNode = null;
         float maxWeight = Float.MIN_VALUE;
         MultiwayTreeNode current = vNode;

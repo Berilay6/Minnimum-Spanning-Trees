@@ -16,6 +16,7 @@ public class MultiwayTreeNode{
     }
 
     public void addChild(MultiwayTreeNode ch){
+
         ch.parent=this;
 
         //case 1: new child is the first child of parent node
